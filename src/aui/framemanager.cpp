@@ -4025,6 +4025,13 @@ void wxAuiManager::OnSetCursor(wxSetCursorEvent& event)
 {
     // determine cursor
     wxAuiDockUIPart* part = HitTest(event.GetX(), event.GetY());
+
+    // Bug fix:
+    // Note that at least on macOS this does not reset the cursor
+    // back to its default state. So in order to avoid the cursor
+    // sticking to wxCURSOR_SIZEWE, wxCURSOR_SIZENS or wxCURSOR_SIZING
+    // we should handle wxAuiDockUIPart::typeCaption explicitely as well
+
     wxCursor cursor;
 
     if (part)
@@ -4051,6 +4058,10 @@ void wxAuiManager::OnSetCursor(wxSetCursorEvent& event)
         else if (part->type == wxAuiDockUIPart::typeGripper)
         {
             cursor = wxCursor(wxCURSOR_SIZING);
+        }
+        else if (part->type == wxAuiDockUIPart::typeCaption)
+        {
+            cursor = wxCursor(*wxSTANDARD_CURSOR);
         }
     }
 
